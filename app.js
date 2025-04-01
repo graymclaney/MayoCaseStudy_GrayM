@@ -52,7 +52,6 @@ function renderTaskList(tasks, listId) {
     tasks.forEach((task) => {
         const row = document.createElement("tr");
 
-        // Create either static text or dropdown based on task status
         const statusCell = task.status === "Completed"
             ? `<td>${task.status}</td>`
             : `<td>
@@ -62,17 +61,46 @@ function renderTaskList(tasks, listId) {
                 </select>
             </td>`;
 
-        // Insert task data and status + delete button
         row.innerHTML = `
             <td>${task.name}</td>
             <td>${task.description}</td>
             ${statusCell}
-            <td><button class="delete" onclick="deleteTask(${task.id})">Delete</button></td>
+            <td>
+                <button onclick="editTask(${task.id})">Edit</button>
+                <button class="delete" onclick="deleteTask(${task.id})">Delete</button>
+            </td>
         `;
 
         taskList.appendChild(row);
     });
 }
+
+async function editTask(id) {
+    const tasks = await fetch(`${API_URL}/`).then(res => res.json());
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    const newName = prompt("Edit Task Name:", task.name);
+    if (newName === null) return; // Cancel clicked
+
+    const newDesc = prompt("Edit Task Description:", task.description);
+    if (newDesc === null) return; // Cancel clicked
+
+    const updatedTask = {
+        name: newName.trim(),
+        description: newDesc.trim(),
+        status: task.status
+    };
+
+    await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTask)
+    });
+
+    loadTasks();
+}
+
 
 // Updates task status in the backend
 async function updateStatus(id, status) {
