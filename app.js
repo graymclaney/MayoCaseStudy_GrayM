@@ -47,7 +47,7 @@ function renderTasks(tasks) {
 // Renders a list of tasks into a specific table section
 function renderTaskList(tasks, listId) {
     const taskList = document.getElementById(listId);
-    taskList.innerHTML = ''; // Clear current list before rendering
+    taskList.innerHTML = ''; 
 
     tasks.forEach((task) => {
         const row = document.createElement("tr");
@@ -81,11 +81,9 @@ async function editTask(id) {
     if (!task) return;
 
     const newName = prompt("Edit Task Name:", task.name);
-    if (newName === null) return; // Cancel clicked
-
+    if (newName === null) return; 
     const newDesc = prompt("Edit Task Description:", task.description);
-    if (newDesc === null) return; // Cancel clicked
-
+    if (newDesc === null) return; 
     const updatedTask = {
         name: newName.trim(),
         description: newDesc.trim(),
